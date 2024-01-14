@@ -23,19 +23,19 @@
           <a class="nav-link {{ isActive('home') }}" aria-current="page" href={{ route('home') }}>{{ __('Home') }}</a>
         </li>
 
-        @if (false)
+        @auth
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Dropdown
+              {{ __('Посты') }}
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
+              <li><a class="dropdown-item" href={{ route('posts.index') }}>{{ __('Просмотреть все') }}</a></li>
+              <li><a class="dropdown-item" href={{ route('posts.showMine') }}>{{ __('Просмотреть мои') }}</a></li>
+              <li><a class="dropdown-item" href={{ route('posts.create') }}>{{ __('Создать') }}</a></li>
+              {{-- <li><hr class="dropdown-divider"></li> --}}
             </ul>
           </li>
-        @endif
+        @endauth
   
       </ul>
 

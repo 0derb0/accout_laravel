@@ -4,7 +4,13 @@
 
 @section('center.content')
   <x-card>
-    <x-card-header>{{ __('Изменить аккаунт') }}</x-card-header>
+    <x-card-header>
+      {{ __('Изменить аккаунт') }}
+
+      <x-slot name="right">
+        <a href={{ route('user.show') }}>{{ __('Назад') }}</a>
+      </x-slot>
+    </x-card-header>
 
     <div class="card-body">
       <form action={{ route('user.update') }} method="POST">

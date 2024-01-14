@@ -2,13 +2,12 @@
 
 <div class="mb-3">
   <label for={{ $id }} class="form-label">{{ $slot }}</label>
-  <input {{ 
+  <textarea {{ 
     $attributes
       ->merge([ 
-        'type'=>'text', 
+        'rows'=>'3', 
         'name'=>'',
         'value' => (old($attributes->get('name')) ?: ''),
-        'placeholder' => '',
       ]) 
-  }} class="form-control" id={{ $id }}>
+  }} class="form-control" id={{ $id }}></textarea>
 </div>

@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\User\EditUserAction;
+use App\Helpers\AlertHelper;
+use App\Http\Requests\User\EditUserPasswordRequest;
+use App\Http\Requests\User\EditUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,42 +13,13 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show()
     {
-        $user = User::find(Auth::id());
+        $user = User::getAuthorized();
 
-        return view('user.show', [
-            'name' => $user->name,
-            'surname' => $user->surname,
-            'email' => $user->email,
-            'phone' => $user->phone,
-        ]);
+        return view('user.show', $user);
     }
 
     /**
@@ -52,62 +27,34 @@ class UserController extends Controller
      */
     public function edit()
     {
-        $user = User::find(Auth::id());
+        $user = User::getAuthorized();
 
-        return view('user.edit', [
-            'name' => $user->name,
-            'surname' => $user->surname,
-            'email' => $user->email,
-            'phone' => $user->phone,
-        ]);
+        return view('user.edit', $user);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(EditUserRequest $request, EditUserAction $editUser)
     {
-        $validated = $request->validate([
-            'name'=>['nullable', 'string'],
-            'surname'=>['nullable', 'string'],
-            'email'=>['nullable', 'string', 'email', 'unique:users'],
-            'phone'=>['nullable', 'string'],
-        ]);
-    
-        $user = User::find(Auth::id());
-    
-        $newUser = [
-            'name' => $validated['name'] ?? $user->name,
-            'surname' => $validated['surname'] ?? $user->surname,
-            'email' => $validated['email'] ?? $user->email,
-            'phone' => $validated['phone'] ?? $user->phone,
-        ];
-    
-        $user->update($newUser);
-    
-        session(['alert' => __('Данные аккаунта успешно изменены')]);
+        $editUser($request->validated());
 
         return back();
     }
 
     public function editPassword()
     {
-        $password = User::find(Auth::id());
+        $password = User::getAuthorized();
 
-        return view('user.editPassword', ['password' => $password]);
+        return view('user.editPassword', $password);
     }
 
-    public function updatePassword(Request $request)
+    public function updatePassword(EditUserPasswordRequest $request, AlertHelper $alert)
     {
-        $validated = $request->validate([
-            'old_password' => ['required', 'string', 'current_password'],
-            'new_password'=>['required', 'string', 'confirmed', 'min:8'],
-        ]); 
+        User::getAuthorized()
+            ->update(['password' => $request->validated()['new_password']]);
 
-        $password = User::find(Auth::id())
-            ->update(['password' => $validated['new_password']]);
-
-        session(['alert' => __('Пароль успешно изменен')]);
+        $alert('Пароль успешно изменен');
         return redirect(route('user.show'));
     }
 
@@ -115,11 +62,11 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy()
+    public function destroy(AlertHelper $alert)
     {
-        User::find(Auth::id())->delete();
+        User::getAuthorized()->delete();
 
-        session(['alert' => __('Аккаунт успешно удален')]);
+        $alert('Аккаунт успешно удален');
         return redirect(route('home'));
     }
 }

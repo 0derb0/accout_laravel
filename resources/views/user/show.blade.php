@@ -43,16 +43,44 @@
 
       
       <div class="d-flex justify-content-between">
-        <x-button>
-          <a href={{ route('logout') }} class="nav-link">{{ __('Выйти') }}</a>
-        </x-button>
+        <x-open-popup-button data-bs-target="#logout">
+          {{ __('Выйти') }}
+        </x-open-popup-button>
 
-        <form action={{ route('user.delete') }} method="post">
-          @csrf
-
-          <x-button type="submit">{{ __('Удалить аккаунт') }}</x-button>
-        </form>
+        <x-open-popup-button data-bs-target="#delete_account">
+          {{ __('Удалить аккаунт') }}
+        </x-open-popup-button>
       </div>
     </div>
   </x-card>
+
+  {{-- Поп-ап выхода из аккаунта --}}
+  <x-popup id="logout">
+    {{ __('Вы действительно хотите выйти?') }}
+
+    <x-slot name="buttons">
+      <form action={{ route('logout') }} method="get">
+        @csrf
+        <x-button type="submit">{{ __('Подтвердить') }}</x-button>
+      </form>
+    </x-slot>
+  </x-popup>
+
+  
+  {{-- Поп-ап удаления аккаунта --}}
+  <x-popup id="delete_account">
+    {{ __('Вы действительно хотите удалить аккаунт?') }}
+
+    <x-slot name="body">
+      {{ __('Данные будут удалены безвозвратно.') }}
+    </x-slot>
+
+    <x-slot name="buttons">
+        <form action={{ route('user.delete') }} method="post">
+          @csrf
+          @method('delete')
+          <x-button type="submit">{{ __('Подтвердить') }}</x-button>
+        </form>
+    </x-slot>
+  </x-popup>
 @endsection
