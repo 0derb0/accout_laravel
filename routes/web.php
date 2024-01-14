@@ -51,6 +51,8 @@ Route::prefix('/user')->middleware('auth')->group(function() {
 });
 
 Route::prefix('/posts')->middleware('auth')->name('posts.')->group(function() {
+    Route::get('/search', [PostController::class, 'search'])->name('search');
+
     Route::get('/', [PostController::class, 'index'])->name('index');
 
     Route::get('/create', [PostController::class, 'create'])->name('create');

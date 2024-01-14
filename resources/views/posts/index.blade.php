@@ -9,6 +9,13 @@
     </x-card-header>
 
     <div class="card-body">
+      <form action="{{ route('posts.search') }}" method="get">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="param" placeholder="{{ __('поиск...') }}" aria-label="Recipient's username" aria-describedby="button-addon2">
+          <button class="btn btn-outline-primary" type="sumbit" id="button-addon2">{{ __('Поиск') }}</button>
+        </div>
+      </form> 
+
       <ul class="list-group mb-3">
         @foreach ($posts as $post)
           <x-list-item href="{{ route('posts.show', $post->id) }}">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Post\EditPostAction;
 use App\Actions\Post\StorePostAction;
 use App\Helpers\AlertHelper;
+use App\Http\Requests\Post\SearchPostRequest;
 use App\Http\Requests\Post\StorePostRequest;
 use App\Http\Requests\Post\EditPostRequest;
 use App\Models\Post;
@@ -13,6 +14,22 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    public function search(SearchPostRequest $request)
+    {
+        $param = $request->validated()['param'];
+
+        $posts = Post::query()
+            ->select('posts.id', 'posts.title', 'users.name', 'users.surname')
+            ->join('users', 'user_id', '=', 'users.id')
+            ->where('posts.title', 'like', "%{$param}%")
+            ->orWhere('users.name', 'like', "%{$param}%")
+            ->orWhere('users.surname', 'like', "%{$param}%")
+            ->orderBy('title')
+            ->paginate(15);
+
+        return view('posts.index', [ 'posts' => $posts ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
